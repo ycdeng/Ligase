@@ -27,9 +27,9 @@ import (
 	"github.com/finogeeks/ligase/model/service/roomserverapi"
 
 	"github.com/finogeeks/ligase/core"
+	"github.com/finogeeks/ligase/plugins/message/external"
 	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
 	"github.com/finogeeks/ligase/skunkworks/log"
-	"github.com/finogeeks/ligase/plugins/message/external"
 	"github.com/finogeeks/ligase/skunkworks/util/id"
 
 	// "github.com/finogeeks/ligase/skunkworks/log"
@@ -143,7 +143,7 @@ func (b *Bridge) SetupBridge(cfg *config.Dendrite) {
 	}
 }
 
-func (b *Bridge) OnMessage(topic string, partition int32, data []byte) {
+func (b *Bridge) OnMessage(topic string, partition int32, data []byte, rawMsg interface{}) {
 	//dec := gob.NewDecoder(bytes.NewReader(data))
 	msg := &model.GobMessage{}
 	//err := dec.Decode(msg)

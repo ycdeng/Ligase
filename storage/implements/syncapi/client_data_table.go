@@ -17,10 +17,11 @@ package syncapi
 import (
 	"context"
 	"database/sql"
+
 	"github.com/finogeeks/ligase/common"
-	log "github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
 	"github.com/finogeeks/ligase/model/types"
+	log "github.com/finogeeks/ligase/skunkworks/log"
 )
 
 const clientDataStreamSchema = `
@@ -95,7 +96,7 @@ func (s *clientDataStreamStatements) insertClientDataStream(
 			StreamType: streamType,
 		}
 		update.SetUid(int64(common.CalcStringHashCode64(userID)))
-		s.db.WriteDBEvent(&update)
+		s.db.WriteDBEventWithTbl(&update, "syncapi_client_data_stream")
 		return id, nil
 	} else {
 		err = s.insertClientDataStreamStmt.QueryRowContext(ctx, id, userID, roomID, dataType, streamType).Scan(&pos)

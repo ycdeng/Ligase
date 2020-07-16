@@ -16,14 +16,15 @@ package rpc
 
 import (
 	"context"
+
 	"github.com/finogeeks/ligase/common"
 	"github.com/finogeeks/ligase/common/config"
 	"github.com/finogeeks/ligase/common/uid"
-	log "github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/types"
+	log "github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/tokenrewrite/storage"
-	"github.com/json-iterator/go"
-	"github.com/nats-io/go-nats"
+	jsoniter "github.com/json-iterator/go"
+	"github.com/nats-io/nats.go"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary

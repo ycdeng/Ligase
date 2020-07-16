@@ -116,6 +116,10 @@ func (dbe *DBEvent) GetTblName() string {
 	return fmt.Sprintf("%s:%d", DBEventKeyToTableStr(dbe.Category, dbe.Key), dbe.Uid)
 }
 
+func (dbe *DBEvent) GetEventKey() string {
+	return fmt.Sprintf("%s:%d", DBEventKeyToTableStr(dbe.Category, dbe.Key), dbe.Uid)
+}
+
 func (dbe *DBEvent) GetUid() int64 {
 	return dbe.Uid
 }

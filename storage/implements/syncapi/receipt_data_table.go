@@ -17,10 +17,11 @@ package syncapi
 import (
 	"context"
 	"database/sql"
+
 	"github.com/finogeeks/ligase/common"
-	log "github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
 	"github.com/finogeeks/ligase/model/types"
+	log "github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/lib/pq"
 )
 
@@ -108,7 +109,7 @@ func (s *receiptDataStreamStatements) insertReceiptDataStream(
 			Content:   content,
 		}
 		update.SetUid(int64(common.CalcStringHashCode64(roomID)))
-		s.db.WriteDBEvent(&update)
+		s.db.WriteDBEventWithTbl(&update, "syncapi_receipt_data_stream")
 		return nil
 	} else {
 		s.deleteLatestReceiptDataStreamStmt.ExecContext(ctx, roomID, evtOffset)

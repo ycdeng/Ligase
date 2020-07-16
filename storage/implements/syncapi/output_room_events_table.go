@@ -23,11 +23,11 @@ import (
 
 	"github.com/finogeeks/ligase/common"
 	"github.com/finogeeks/ligase/common/encryption"
-	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
-	log "github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
 	"github.com/finogeeks/ligase/model/roomservertypes"
 	"github.com/finogeeks/ligase/model/syncapitypes"
+	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
+	log "github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/lib/pq"
 )
 
@@ -483,7 +483,7 @@ func (s *outputRoomEventsStatements) insertEvent(
 			OriginTs:     originTs,
 		}
 		update.SetUid(int64(common.CalcStringHashCode64(event.RoomID)))
-		s.db.WriteDBEvent(&update)
+		s.db.WriteDBEventWithTbl(&update, "syncapi_output_room_events")
 	} else {
 		if encryption.CheckCrypto(event.Type) {
 			_, err = s.insertEventStmt.ExecContext(ctx,
@@ -688,6 +688,32 @@ func (s *outputRoomEventsStatements) updateEvent(
 	eventID string,
 	RoomID string,
 	eventType string,
+) (err error) {
+	if s.db.AsyncSave == true {
+		var update dbtypes.DBEvent
+		update.Category = dbtypes.CATEGORY_SYNC_DB_EVENT
+		update.Key = dbtypes.SyncEventUpdateContentKey
+		update.SyncDBEvents.SyncEventUpdateContent = &dbtypes.SyncEventUpdateContent{
+			EventID:   eventID,
+			RoomID:    RoomID,
+			Content:   string(eventJson),
+			EventType: eventType,
+		}
+		update.SetUid(int64(common.CalcStringHashCode64(RoomID)))
+		s.db.WriteDBEventWithTbl(&update, "syncapi_output_room_events")
+	} else {
+		err = s.updateEventRaw(ctx, eventJson, eventID, RoomID, eventType)
+	}
+
+	return
+}
+
+func (s *outputRoomEventsStatements) updateEventRaw(
+	ctx context.Context,
+	eventJson []byte,
+	eventID string,
+	RoomID string,
+	eventType string,
 ) error {
 	var err error
 	if encryption.CheckCrypto(eventType) {
@@ -872,7 +898,7 @@ func (s *outputRoomEventsStatements) UpdateSyncEvent(
 			OriginTs:     originTs,
 		}
 		update.SetUid(int64(common.CalcStringHashCode64(roomID)))
-		return s.db.WriteDBEvent(&update)
+		return s.db.WriteDBEventWithTbl(&update, "syncapi_output_room_events")
 	} else {
 		return s.onUpdateSyncEvent(ctx, domainOffset, originTs, domain, roomID, eventID)
 	}

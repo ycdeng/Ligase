@@ -30,9 +30,9 @@ import (
 	"github.com/finogeeks/ligase/common/uid"
 	"github.com/finogeeks/ligase/common/utils"
 	"github.com/finogeeks/ligase/core"
-	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
 	"github.com/finogeeks/ligase/model/dbtypes"
 	"github.com/finogeeks/ligase/model/roomservertypes"
+	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
 	_ "github.com/lib/pq"
 
 	log "github.com/finogeeks/ligase/skunkworks/log"
@@ -111,6 +111,10 @@ func (d *Database) SetIDGenerator(idg *uid.UidGenerator) {
 	d.idg = idg
 }
 
+func (d *Database) GetDB() *sql.DB {
+	return d.db
+}
+
 // WriteOutputEvents implements OutputRoomEventWriter
 func (d *Database) WriteDBEvent(update *dbtypes.DBEvent) error {
 	return common.GetTransportMultiplexer().SendWithRetry(
@@ -118,6 +122,16 @@ func (d *Database) WriteDBEvent(update *dbtypes.DBEvent) error {
 		d.topic,
 		&core.TransportPubMsg{
 			Keys: []byte(update.GetTblName()),
+			Obj:  update,
+		})
+}
+
+func (d *Database) WriteDBEventWithTbl(update *dbtypes.DBEvent, tbl string) error {
+	return common.GetTransportMultiplexer().SendWithRetry(
+		d.underlying,
+		d.topic+"_"+tbl,
+		&core.TransportPubMsg{
+			Keys: []byte(update.GetEventKey()),
 			Obj:  update,
 		})
 }

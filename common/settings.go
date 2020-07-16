@@ -19,8 +19,8 @@ import (
 	"sync"
 
 	"github.com/finogeeks/ligase/core"
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/plugins/message/external"
+	"github.com/finogeeks/ligase/skunkworks/log"
 )
 
 type FedDomainInfo struct {
@@ -131,7 +131,7 @@ func (c *SettingsConsumer) Start() error {
 	return nil
 }
 
-func (c *SettingsConsumer) OnMessage(topic string, partition int32, data []byte) {
+func (c *SettingsConsumer) OnMessage(topic string, partition int32, data []byte, rawMsg interface{}) {
 	var req external.ReqPutSettingRequest
 	err := json.Unmarshal(data, &req)
 	log.Infof("SettingsConsumer OnMessage topic: %s, partition: %d, data: %s", topic, partition, string(data))

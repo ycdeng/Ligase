@@ -103,7 +103,7 @@ func (s *DBEventCacheConsumer) Start() error {
 	return nil
 }
 
-func (s *DBEventCacheConsumer) OnMessage(topic string, partition int32, data []byte) {
+func (s *DBEventCacheConsumer) OnMessage(topic string, partition int32, data []byte, rawMsg interface{}) {
 	var output dbtypes.DBEvent
 	if err := json.Unmarshal(data, &output); err != nil {
 		log.Errorw("dbevent: message parse failure", log.KeysAndValues{"error", err})

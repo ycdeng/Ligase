@@ -26,13 +26,13 @@ import (
 	"github.com/finogeeks/ligase/common"
 	"github.com/finogeeks/ligase/common/uid"
 	"github.com/finogeeks/ligase/core"
-	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
-	log "github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/authtypes"
 	"github.com/finogeeks/ligase/model/dbtypes"
 	"github.com/finogeeks/ligase/model/roomservertypes"
 	"github.com/finogeeks/ligase/model/syncapitypes"
 	"github.com/finogeeks/ligase/model/types"
+	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
+	log "github.com/finogeeks/ligase/skunkworks/log"
 	jsoniter "github.com/json-iterator/go"
 	_ "github.com/lib/pq"
 )
@@ -78,6 +78,16 @@ func (d *Database) WriteDBEvent(update *dbtypes.DBEvent) error {
 		d.topic,
 		&core.TransportPubMsg{
 			Keys: []byte(update.GetTblName()),
+			Obj:  update,
+		})
+}
+
+func (d *Database) WriteDBEventWithTbl(update *dbtypes.DBEvent, tbl string) error {
+	return common.GetTransportMultiplexer().SendWithRetry(
+		d.underlying,
+		d.topic+"_"+tbl,
+		&core.TransportPubMsg{
+			Keys: []byte(update.GetEventKey()),
 			Obj:  update,
 		})
 }
@@ -159,6 +169,10 @@ func (d *Database) SetGauge(qryDBGauge mon.LabeledGauge) {
 
 func (d *Database) SetIDGenerator(idg *uid.UidGenerator) {
 	d.idg = idg
+}
+
+func (d *Database) GetDB() *sql.DB {
+	return d.db
 }
 
 // Events lookups a list of event by their event ID.
@@ -279,6 +293,10 @@ func (d *Database) UpdateEvent(
 		return err
 	}
 	return d.events.updateEvent(ctx, eventJSON, eventID, RoomID, eventType)
+}
+
+func (d *Database) OnUpdateEvent(ctx context.Context, eventID, roomID string, eventJson []byte, eventType string) error {
+	return d.events.updateEventRaw(ctx, eventJson, eventID, roomID, eventType)
 }
 
 func (d *Database) SelectEventsByDir(

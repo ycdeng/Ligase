@@ -50,6 +50,13 @@ func StartFrontServer(base *basecomponent.BaseDendrite, cmd *serverCmdPar) {
 	addProducer(transportMultiplexer, kafka.Producer.UserInfoUpdate)
 	addProducer(transportMultiplexer, kafka.Producer.DismissRoom)
 
+	for _, v := range dbUpdateProducerName {
+		dbUpdates := kafka.Producer.DBUpdates
+		dbUpdates.Topic = dbUpdates.Topic + "_" + v
+		dbUpdates.Name = dbUpdates.Name + "_" + v
+		addProducer(transportMultiplexer, dbUpdates)
+	}
+
 	addConsumer(transportMultiplexer, kafka.Consumer.OutputRoomEventPublicRooms, base.Cfg.MultiInstance.Instance)
 	addConsumer(transportMultiplexer, kafka.Consumer.InputRoomEvent, base.Cfg.MultiInstance.Instance)
 	addConsumer(transportMultiplexer, kafka.Consumer.DismissRoom, 0)

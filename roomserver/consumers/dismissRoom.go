@@ -24,12 +24,12 @@ import (
 	"github.com/finogeeks/ligase/common/config"
 	"github.com/finogeeks/ligase/common/uid"
 	"github.com/finogeeks/ligase/core"
-	"github.com/finogeeks/ligase/skunkworks/log"
+	fed "github.com/finogeeks/ligase/federation/fedreq"
 	"github.com/finogeeks/ligase/model/service"
 	"github.com/finogeeks/ligase/model/service/roomserverapi"
 	"github.com/finogeeks/ligase/plugins/message/external"
+	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/storage/model"
-	fed "github.com/finogeeks/ligase/federation/fedreq"
 )
 
 type DismissRoomConsumer struct {
@@ -72,7 +72,7 @@ func (c *DismissRoomConsumer) Start() error {
 	return nil
 }
 
-func (c *DismissRoomConsumer) OnMessage(topic string, partition int32, data []byte) {
+func (c *DismissRoomConsumer) OnMessage(topic string, partition int32, data []byte, rawMsg interface{}) {
 	ctx := context.TODO()
 	var req external.DismissRoomRequest
 	err := json.Unmarshal(data, &req)

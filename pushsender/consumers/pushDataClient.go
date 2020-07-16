@@ -18,20 +18,21 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/finogeeks/ligase/common/filter"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"sync"
 	"time"
 
+	"github.com/finogeeks/ligase/common/filter"
+
 	"github.com/finogeeks/ligase/common"
 	"github.com/finogeeks/ligase/common/config"
-	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
 	"github.com/finogeeks/ligase/model/pushapitypes"
+	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
 	"github.com/finogeeks/ligase/storage/model"
-	"github.com/json-iterator/go"
-	"github.com/nats-io/go-nats"
+	jsoniter "github.com/json-iterator/go"
+	"github.com/nats-io/nats.go"
 
 	"github.com/finogeeks/ligase/skunkworks/log"
 )

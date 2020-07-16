@@ -20,8 +20,9 @@ package consumers
 import (
 	"context"
 	"fmt"
-	"github.com/finogeeks/ligase/syncserver/extra"
 	"time"
+
+	"github.com/finogeeks/ligase/syncserver/extra"
 
 	"github.com/finogeeks/ligase/common/uid"
 	"github.com/finogeeks/ligase/model/roomservertypes"
@@ -29,14 +30,15 @@ import (
 	jsoniter "github.com/json-iterator/go"
 
 	jsonRaw "encoding/json"
+
 	"github.com/finogeeks/ligase/common"
 	"github.com/finogeeks/ligase/common/config"
 	"github.com/finogeeks/ligase/core"
-	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
 	"github.com/finogeeks/ligase/model/repos"
 	"github.com/finogeeks/ligase/model/service/roomserverapi"
 	"github.com/finogeeks/ligase/model/syncapitypes"
 	"github.com/finogeeks/ligase/plugins/message/external"
+	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
 	"github.com/finogeeks/ligase/storage/model"
 
 	"github.com/finogeeks/ligase/skunkworks/log"
@@ -138,7 +140,7 @@ func (s *RoomEventFeedConsumer) Start() error {
 	return nil
 }
 
-func (s *RoomEventFeedConsumer) OnMessage(topic string, partition int32, data []byte) {
+func (s *RoomEventFeedConsumer) OnMessage(topic string, partition int32, data []byte, rawMsg interface{}) {
 	var output roomserverapi.OutputEvent
 	if err := json.Unmarshal(data, &output); err != nil {
 		log.Errorw("syncapi: message parse failure", log.KeysAndValues{"error", err})

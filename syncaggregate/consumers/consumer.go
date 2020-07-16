@@ -19,21 +19,22 @@ package consumers
 
 import (
 	"context"
-	"github.com/finogeeks/ligase/adapter"
 	"math"
 	"math/rand"
 	"time"
 
-	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
+	"github.com/finogeeks/ligase/adapter"
+
 	"github.com/finogeeks/ligase/plugins/message/external"
+	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
 
 	"github.com/finogeeks/ligase/common"
 	"github.com/finogeeks/ligase/common/config"
 	"github.com/finogeeks/ligase/core"
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/repos"
 	"github.com/finogeeks/ligase/model/service/roomserverapi"
 	"github.com/finogeeks/ligase/model/types"
+	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/storage/model"
 	jsoniter "github.com/json-iterator/go"
 )
@@ -146,7 +147,7 @@ func (s *EventFeedConsumer) Start() error {
 	return nil
 }
 
-func (s *EventFeedConsumer) OnMessage(topic string, partition int32, data []byte) {
+func (s *EventFeedConsumer) OnMessage(topic string, partition int32, data []byte, rawMsg interface{}) {
 	var output roomserverapi.OutputEvent
 	if err := json.Unmarshal(data, &output); err != nil {
 		log.Errorw("sync aggregate: message parse failure", log.KeysAndValues{"error", err})

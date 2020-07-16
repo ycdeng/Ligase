@@ -17,11 +17,11 @@ package rpc
 import (
 	"github.com/finogeeks/ligase/common"
 	"github.com/finogeeks/ligase/common/config"
+	"github.com/finogeeks/ligase/model/types"
 	util "github.com/finogeeks/ligase/skunkworks/gomatrixutil"
 	"github.com/finogeeks/ligase/skunkworks/log"
-	"github.com/finogeeks/ligase/model/types"
 	"github.com/finogeeks/ligase/syncaggregate/sync"
-	"github.com/nats-io/go-nats"
+	"github.com/nats-io/nats.go"
 )
 
 type SyncRpcConsumer struct {

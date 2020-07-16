@@ -31,7 +31,8 @@ const (
 	SyncUserTimeLineInsertKey    int64 = 11
 	SyncOutputMinStreamInsertKey int64 = 12
 	SyncEventUpdateKey           int64 = 13
-	SyncMaxKey                   int64 = 14
+	SyncEventUpdateContentKey    int64 = 14
+	SyncMaxKey                   int64 = 15
 )
 
 func SyncDBEventKeyToStr(key int64) string {
@@ -64,6 +65,8 @@ func SyncDBEventKeyToStr(key int64) string {
 		return "SyncOutputMinStreamInsertKey"
 	case SyncEventUpdateKey:
 		return "SyncEventUpdateKey"
+	case SyncEventUpdateContentKey:
+		return "SyncEventUpdateBodyKey"
 	default:
 		return "unknown"
 	}
@@ -110,6 +113,7 @@ type SyncDBEvent struct {
 	SyncUserTimeLineInsert    *SyncUserTimeLineInsert    `json:"sync_user_time_line_insert,omitempty"`
 	SyncOutputMinStreamInsert *SyncOutputMinStreamInsert `json:"sync_output_min_stream_insert,omitempty"`
 	SyncEventUpdate           *SyncEventUpdate           `json:"sync_output_event_update,omitempty"`
+	SyncEventUpdateContent    *SyncEventUpdateContent    `json:"sync_output_event_update_content,omitempty"`
 }
 
 type SyncEventUpdate struct {
@@ -118,6 +122,13 @@ type SyncEventUpdate struct {
 	OriginTs     int64  `json:"origin_ts"`
 	RoomId       string `json:"room_id"`
 	EventId      string `json:"event_id"`
+}
+
+type SyncEventUpdateContent struct {
+	EventID   string `json:"event_id"`
+	RoomID    string `json:"room_id"`
+	Content   string `json:"content"`
+	EventType string `json:"event_type"`
 }
 
 type SyncOutputMinStreamInsert struct {

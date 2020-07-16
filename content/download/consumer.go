@@ -33,9 +33,9 @@ import (
 	"github.com/finogeeks/ligase/content/storage/model"
 	"github.com/finogeeks/ligase/core"
 	"github.com/finogeeks/ligase/federation/client"
+	"github.com/finogeeks/ligase/model/mediatypes"
 	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
 	"github.com/finogeeks/ligase/skunkworks/log"
-	"github.com/finogeeks/ligase/model/mediatypes"
 )
 
 const kDefaultWorkerCount = 10
@@ -267,7 +267,7 @@ func (p *DownloadConsumer) pushDownload(roomID, userID, eventID, domain, netdisk
 	p.startWorkerIfNeed()
 }
 
-func (p *DownloadConsumer) OnMessage(topic string, partition int32, data []byte) {
+func (p *DownloadConsumer) OnMessage(topic string, partition int32, data []byte, rawMsg interface{}) {
 	var ev gomatrixserverlib.Event
 	err := json.Unmarshal(data, &ev)
 	if err != nil {

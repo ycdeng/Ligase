@@ -21,8 +21,8 @@ import (
 )
 
 type IProcessor interface {
-	OnMultiplexerMessage(serviceID string, msg interface{}) (interface{}, error) //as receiver for multiplexer
-	OnMessage(topic string, partition int32, data []byte) ([]byte, error)        //as receiver for transport
+	OnMultiplexerMessage(serviceID string, msg interface{}) (interface{}, error)              //as receiver for multiplexer
+	OnMessage(topic string, partition int32, data []byte, rawMsg interface{}) ([]byte, error) //as receiver for transport
 	PreStart()
 	Start()
 }

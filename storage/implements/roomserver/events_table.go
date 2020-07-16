@@ -21,8 +21,8 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/lib/pq"
 )
 
@@ -307,7 +307,7 @@ func (s *eventStatements) insertEvent(
 			Domain:        domain,
 		}
 		update.SetUid(roomNID)
-		s.db.WriteDBEvent(&update)
+		s.db.WriteDBEventWithTbl(&update, "roomserver_events")
 		return eventNID, 0, nil
 	}
 
@@ -376,7 +376,7 @@ func (s *eventStatements) updateRoomEvent(
 			Domain:   domain,
 		}
 		update.SetUid(roomNID)
-		s.db.WriteDBEvent(&update)
+		s.db.WriteDBEventWithTbl(&update, "roomserver_events")
 		return nil
 	}
 	return s.onUpdateRoomEvent(ctx, eventNID, roomNID, depth, domainOffset, domain)

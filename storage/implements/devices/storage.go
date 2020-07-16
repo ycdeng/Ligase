@@ -20,14 +20,15 @@ package devices
 import (
 	"context"
 	"database/sql"
+
 	mon "github.com/finogeeks/ligase/skunkworks/monitor/go-client/monitor"
 
 	"github.com/finogeeks/ligase/common"
 	"github.com/finogeeks/ligase/common/filter"
 	"github.com/finogeeks/ligase/core"
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/authtypes"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	"github.com/finogeeks/ligase/skunkworks/log"
 )
 
 func init() {
@@ -91,6 +92,16 @@ func (d *Database) WriteDBEvent(update *dbtypes.DBEvent) error {
 		d.topic,
 		&core.TransportPubMsg{
 			Keys: []byte(update.GetTblName()),
+			Obj:  update,
+		})
+}
+
+func (d *Database) WriteDBEventWithTbl(update *dbtypes.DBEvent, tbl string) error {
+	return common.GetTransportMultiplexer().SendWithRetry(
+		d.underlying,
+		d.topic+"_"+tbl,
+		&core.TransportPubMsg{
+			Keys: []byte(update.GetEventKey()),
 			Obj:  update,
 		})
 }

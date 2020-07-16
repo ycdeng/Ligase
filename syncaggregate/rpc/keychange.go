@@ -15,16 +15,17 @@
 package rpc
 
 import (
+	"net/http"
+
 	"github.com/finogeeks/ligase/common"
 	"github.com/finogeeks/ligase/common/config"
-	"github.com/finogeeks/ligase/skunkworks/gomatrixutil"
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/feedstypes"
 	"github.com/finogeeks/ligase/model/repos"
 	syncapi "github.com/finogeeks/ligase/model/syncapitypes"
 	"github.com/finogeeks/ligase/model/types"
-	"github.com/nats-io/go-nats"
-	"net/http"
+	util "github.com/finogeeks/ligase/skunkworks/gomatrixutil"
+	"github.com/finogeeks/ligase/skunkworks/log"
+	"github.com/nats-io/nats.go"
 )
 
 type KeyChangeRpcConsumer struct {

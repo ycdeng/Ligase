@@ -18,10 +18,10 @@ import (
 	"github.com/finogeeks/ligase/common"
 	"github.com/finogeeks/ligase/core"
 	"github.com/finogeeks/ligase/federation/config"
+	"github.com/finogeeks/ligase/model/types"
 	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
 	"github.com/finogeeks/ligase/skunkworks/log"
-	"github.com/finogeeks/ligase/model/types"
-	"github.com/nats-io/go-nats"
+	"github.com/nats-io/nats.go"
 )
 
 type EduSender struct {
@@ -100,7 +100,7 @@ func (e *EduSender) startWorker(msgChan chan *gomatrixserverlib.EDU) {
 	}
 }
 
-func (e *EduSender) OnMessage(topic string, partition int32, data []byte) {
+func (e *EduSender) OnMessage(topic string, partition int32, data []byte, rawMsg interface{}) {
 	log.Infof("fed-edu-sender received data topic:%s, data:%s", topic, string(data))
 	var output gomatrixserverlib.EDU
 	if err := json.Unmarshal(data, &output); err != nil {
