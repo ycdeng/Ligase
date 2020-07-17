@@ -21,12 +21,12 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	"github.com/finogeeks/ligase/skunkworks/log"
 )
 
 const settingsSchema = `
-CREATE TABLE IF NOT EXISTS public.roomserver_settings 
+CREATE TABLE IF NOT EXISTS public.roomserver_settings
 (
   setting_key TEXT NOT NULL,
   val TEXT NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS public.roomserver_settings
 
 const upsertSettingsSQL = "" +
 	"INSERT INTO roomserver_settings (setting_key, val) VALUES ($1, $2)" +
-	" ON CONFLICT ON CONSTRAINT roomserver_setting_unique" +
+	" ON CONFLICT(setting_key)" +
 	" DO UPDATE SET val = $2"
 
 const selectSettingsSQL = "" +

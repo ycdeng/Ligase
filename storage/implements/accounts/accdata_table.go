@@ -22,8 +22,8 @@ import (
 	"database/sql"
 
 	"github.com/finogeeks/ligase/common"
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	"github.com/finogeeks/ligase/skunkworks/log"
 )
 
 const accountDataSchema = `
@@ -46,7 +46,7 @@ CREATE INDEX IF NOT EXISTS account_data_user_id ON account_data(user_id, room_id
 
 const insertAccountDataSQL = `
 	INSERT INTO account_data(user_id, room_id, type, content) VALUES($1, $2, $3, $4)
-	ON CONFLICT ON CONSTRAINT account_data_unique DO UPDATE SET content = EXCLUDED.content
+	ON CONFLICT(user_id, room_id, type) DO UPDATE SET content = EXCLUDED.content
 `
 
 const selectAccountDataCountSQL = "" +

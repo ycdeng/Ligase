@@ -23,8 +23,8 @@ import (
 
 	"github.com/finogeeks/ligase/common"
 	"github.com/finogeeks/ligase/common/encryption"
-	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
 	"github.com/lib/pq"
 )
 
@@ -54,13 +54,13 @@ CREATE TABLE IF NOT EXISTS syncapi_current_room_state (
 CREATE UNIQUE INDEX IF NOT EXISTS syncapi_rs_event_id_idx ON syncapi_current_room_state(event_id);
 CREATE INDEX IF NOT EXISTS syncapi_current_rooom_id_idx ON syncapi_current_room_state(room_id);
 -- for querying membership states of users
-CREATE INDEX IF NOT EXISTS syncapi_membership_idx ON syncapi_current_room_state(type, state_key, membership) WHERE membership IS NOT NULL AND membership != 'leave';
+CREATE INDEX IF NOT EXISTS syncapi_membership_idx ON syncapi_current_room_state(type, state_key, membership);
 `
 
 const upsertRoomStateSQL = "" +
 	"INSERT INTO syncapi_current_room_state (room_id, event_id, type, state_key, event_json, membership, added_at)" +
 	" VALUES ($1, $2, $3, $4, $5, $6, $7)" +
-	" ON CONFLICT ON CONSTRAINT syncapi_room_state_unique" +
+	" ON CONFLICT(room_id, type, state_key)" +
 	" DO UPDATE SET event_id = $2, event_json = $5, membership = $6, added_at = $7"
 
 const selectRoomIDsWithMembershipSQL = "" +

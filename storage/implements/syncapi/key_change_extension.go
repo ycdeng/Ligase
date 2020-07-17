@@ -17,10 +17,11 @@ package syncapi
 import (
 	"context"
 	"database/sql"
+
 	"github.com/finogeeks/ligase/common"
-	log "github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
 	"github.com/finogeeks/ligase/model/types"
+	log "github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/lib/pq"
 )
 
@@ -43,7 +44,7 @@ CREATE INDEX IF NOT EXISTS syncapi_key_change_user_id_idx ON syncapi_key_change_
 
 const insertKeyStreamSQL = "" +
 	"INSERT INTO syncapi_key_change_stream (id, changed_user_id) VALUES ($1, $2)" +
-	" ON CONFLICT ON CONSTRAINT syncapi_key_change_tream_unique" +
+	" ON CONFLICT (changed_user_id)" +
 	" DO UPDATE SET id = EXCLUDED.id"
 
 const selectHistoryKeyStreamSQL = "" +

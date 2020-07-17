@@ -22,8 +22,8 @@ import (
 	"database/sql"
 
 	"github.com/finogeeks/ligase/common"
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	"github.com/finogeeks/ligase/skunkworks/log"
 )
 
 const oneTimeKeySchema = `
@@ -45,11 +45,11 @@ CREATE INDEX IF NOT EXISTS encrypt_onetime_key_device_id ON encrypt_onetime_key(
 `
 const insertOneTimeKeySQL = `
 INSERT INTO encrypt_onetime_key (device_id, user_id, key_id, key_info, algorithm, signature, identifier)
-VALUES ($1, $2, $3, $4, $5, $6, $7) on conflict ON CONSTRAINT encrypt_onetime_key_unique 
+VALUES ($1, $2, $3, $4, $5, $6, $7) on conflict(device_id, user_id, key_id, algorithm)
 DO UPDATE SET key_info = EXCLUDED.key_info, signature = EXCLUDED.signature, identifier = EXCLUDED.identifier
 `
 const deleteOneTimeKeySQL = `
-DELETE FROM encrypt_onetime_key 
+DELETE FROM encrypt_onetime_key
 WHERE user_id = $1 AND device_id = $2 AND algorithm = $3 AND key_id = $4
 `
 

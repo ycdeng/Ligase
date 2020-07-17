@@ -32,7 +32,7 @@ CREATE INDEX IF NOT EXISTS server_name_id ON server_name(name);
 const upsertServerNameSQL = "" +
 	"INSERT INTO server_name (id,name)" +
 	" VALUES ($1,$2)" +
-	" ON CONFLICT ON CONSTRAINT name_unique " +
+	" ON CONFLICT(name) " +
 	" DO UPDATE SET id = EXCLUDED.id, name = EXCLUDED.name"
 
 const selectServerNameSQL = "" +

@@ -17,10 +17,11 @@ package syncapi
 import (
 	"context"
 	"database/sql"
+
 	"github.com/finogeeks/ligase/common"
-	log "github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
 	"github.com/finogeeks/ligase/model/types"
+	log "github.com/finogeeks/ligase/skunkworks/log"
 )
 
 const clientDataStreamSchema = `
@@ -49,7 +50,7 @@ CREATE INDEX IF NOT EXISTS syncapi_client_data_user_id_idx ON syncapi_client_dat
 
 const insertClientDataStreamSQL = "" +
 	"INSERT INTO syncapi_client_data_stream (id, user_id, room_id, data_type, stream_type) VALUES ($1, $2, $3, $4, $5)" +
-	" ON CONFLICT ON CONSTRAINT syncapi_client_data_stream_unique" +
+	" ON CONFLICT(user_id, room_id, data_type, stream_type)" +
 	" DO UPDATE SET id = EXCLUDED.id" +
 	" RETURNING id"
 

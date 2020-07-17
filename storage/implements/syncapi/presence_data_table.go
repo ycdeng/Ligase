@@ -17,10 +17,11 @@ package syncapi
 import (
 	"context"
 	"database/sql"
+
 	"github.com/finogeeks/ligase/common"
-	log "github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
 	"github.com/finogeeks/ligase/model/types"
+	log "github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/lib/pq"
 )
 
@@ -39,7 +40,7 @@ CREATE INDEX IF NOT EXISTS syncapi_presence_data_stream_id_idx ON syncapi_presen
 
 const insertPresenceDataStreamSQL = "" +
 	"INSERT INTO syncapi_presence_data_stream (id, user_id, content) VALUES ($1, $2, $3)" +
-	" ON CONFLICT ON CONSTRAINT syncapi_presence_data_stream_unique" +
+	" ON CONFLICT(user_id)" +
 	" DO UPDATE SET id = EXCLUDED.id, content = EXCLUDED.content" +
 	" RETURNING id"
 

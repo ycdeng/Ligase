@@ -17,10 +17,11 @@ package syncapi
 import (
 	"context"
 	"database/sql"
+
 	"github.com/finogeeks/ligase/common"
-	log "github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
 	"github.com/finogeeks/ligase/model/types"
+	log "github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/lib/pq"
 )
 
@@ -45,7 +46,7 @@ CREATE INDEX  IF NOT EXISTS syncapi_load_room_receipt_data_stream ON syncapi_rec
 
 const insertReceiptDataStreamSQL = "" +
 	"INSERT INTO syncapi_receipt_data_stream (id, evt_offset, room_id, content) VALUES ($1, $2, $3, $4)" +
-	" ON CONFLICT DO NOTHING"
+	" ON CONFLICT(id, room_id) DO NOTHING"
 
 const selectHistoryReceiptDataStreamSQL = "" +
 	"SELECT id, evt_offset, room_id, content  FROM syncapi_receipt_data_stream WHERE room_id = $1" +

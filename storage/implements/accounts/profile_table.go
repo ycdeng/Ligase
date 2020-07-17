@@ -22,9 +22,9 @@ import (
 	"database/sql"
 
 	"github.com/finogeeks/ligase/common"
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/authtypes"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	"github.com/finogeeks/ligase/skunkworks/log"
 )
 
 const profilesSchema = `
@@ -43,21 +43,21 @@ CREATE UNIQUE INDEX IF NOT EXISTS account_profiles_user_id_idx ON account_profil
 
 const upsertProfileSQL = "" +
 	"INSERT INTO account_profiles(user_id, display_name, avatar_url) VALUES ($1, $2, $3)" +
-	" ON CONFLICT ON CONSTRAINT account_profiles_unique" +
+	" ON CONFLICT(user_id)" +
 	" DO UPDATE SET display_name = EXCLUDED.display_name, avatar_url = EXCLUDED.avatar_url"
 
 const initProfileSQL = "" +
 	"INSERT INTO account_profiles(user_id, display_name, avatar_url) VALUES ($1, $2, $3)" +
-	" ON CONFLICT ON CONSTRAINT account_profiles_unique DO NOTHING"
+	" ON CONFLICT(user_id) DO NOTHING"
 
 const upsertDisplayNameSQL = "" +
 	"INSERT INTO account_profiles(user_id, display_name) VALUES ($1, $2)" +
-	" ON CONFLICT ON CONSTRAINT account_profiles_unique" +
+	" ON CONFLICT(user_id)" +
 	" DO UPDATE SET display_name = EXCLUDED.display_name"
 
 const upsertAvatarSQL = "" +
 	"INSERT INTO account_profiles(user_id, avatar_url) VALUES ($1, $2)" +
-	" ON CONFLICT ON CONSTRAINT account_profiles_unique" +
+	" ON CONFLICT(user_id)" +
 	" DO UPDATE SET avatar_url = EXCLUDED.avatar_url"
 
 const recoverProfileSQL = "" +

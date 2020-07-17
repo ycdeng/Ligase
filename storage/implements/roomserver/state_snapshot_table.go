@@ -21,8 +21,8 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/lib/pq"
 )
 
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS roomserver_state_snapshots (
 `
 const insertStateSQL = "" +
 	"INSERT INTO roomserver_state_snapshots (state_snapshot_nid, room_nid, state_block_nids)" +
-	" VALUES ($1, $2, $3) ON CONFLICT DO NOTHING"
+	" VALUES ($1, $2, $3) ON CONFLICT(state_snapshot_nid) DO NOTHING"
 
 const selectStateSQL = "" +
 	"SELECT room_nid, state_block_nids FROM roomserver_state_snapshots WHERE state_snapshot_nid = $1"

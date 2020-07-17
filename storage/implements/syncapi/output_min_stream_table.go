@@ -17,9 +17,10 @@ package syncapi
 import (
 	"context"
 	"database/sql"
+
 	"github.com/finogeeks/ligase/common"
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	"github.com/finogeeks/ligase/skunkworks/log"
 )
 
 const OutputMinStreamSchema = `
@@ -33,7 +34,7 @@ CREATE INDEX IF NOT EXISTS syncapi_output_min_stream_idx ON syncapi_output_min_s
 
 const insertOutputMinStreamSQL = "" +
 	"INSERT INTO syncapi_output_min_stream (id, room_id) VALUES ($1, $2)" +
-	" ON CONFLICT ON CONSTRAINT syncapi_output_min_stream_unique DO UPDATE SET id = EXCLUDED.id"
+	" ON CONFLICT (room_id) DO UPDATE SET id = EXCLUDED.id"
 
 const selectOutputMinStreamSQL = "" +
 	"SELECT id  FROM syncapi_output_min_stream WHERE room_id = $1"

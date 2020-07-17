@@ -23,8 +23,8 @@ import (
 	"time"
 
 	"github.com/finogeeks/ligase/common"
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	"github.com/finogeeks/ligase/skunkworks/log"
 )
 
 const devicesSchema = `
@@ -56,7 +56,7 @@ CREATE INDEX IF NOT EXISTS device_ts_idx ON device_devices(created_ts);
 
 const upsertDeviceSQL = "" +
 	"INSERT INTO device_devices(device_id, user_id, created_ts, display_name, device_type, identifier, last_active_ts) VALUES ($1, $2, $3, $4, $5, $6, $7)" +
-	" ON CONFLICT ON CONSTRAINT device_devices_unique" +
+	" ON CONFLICT(identifier, user_id)" +
 	" DO UPDATE SET device_id = EXCLUDED.device_id, created_ts = EXCLUDED.created_ts, display_name = EXCLUDED.display_name, device_type = EXCLUDED.device_type, last_active_ts = EXCLUDED.last_active_ts"
 
 const deleteDeviceSQL = "" +

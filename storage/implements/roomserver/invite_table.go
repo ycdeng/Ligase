@@ -53,13 +53,12 @@ CREATE TABLE IF NOT EXISTS roomserver_invites (
 	sender_id text NOT NULL DEFAULT ''
 );
 
-CREATE INDEX IF NOT EXISTS roomserver_invites_active_idx ON roomserver_invites (target_id, room_nid)
-	WHERE NOT retired;
+CREATE INDEX IF NOT EXISTS roomserver_invites_active_idx ON roomserver_invites (target_id, room_nid);
 `
 const insertInviteEventSQL = "" +
 	"INSERT INTO roomserver_invites (invite_event_id, room_nid, target_id," +
 	" sender_id, invite_event_json) VALUES ($1, $2, $3, $4, $5)" +
-	" ON CONFLICT DO NOTHING"
+	" ON CONFLICT(invite_event_id) DO NOTHING"
 
 // Retire every active invite for a user in a room.
 // Ideally we'd know which invite events were retired by a given update so we

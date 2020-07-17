@@ -22,9 +22,9 @@ import (
 	"database/sql"
 
 	"github.com/finogeeks/ligase/common"
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/authtypes"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	"github.com/finogeeks/ligase/skunkworks/log"
 )
 
 const userInfoSchema = `
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS account_user_info (
     mobile TEXT,
     landline TEXT,
 	email TEXT,
-	is_deleted TEXT NOT NULL DEFAULT 0,
+	is_deleted TEXT NOT NULL DEFAULT '0',
 
     CONSTRAINT account_user_info_unique UNIQUE (user_id)
 );
@@ -44,13 +44,13 @@ CREATE UNIQUE INDEX IF NOT EXISTS account_user_info_user_id_idx ON account_user_
 `
 
 const upsertUserInfoSQL = "" +
-	"INSERT INTO account_user_info(user_id, user_name, job_number, mobile, landline, email, is_deleted) VALUES ($1, $2, $3, $4, $5, $6, 0)" +
-	" ON CONFLICT ON CONSTRAINT account_user_info_unique" +
-	" DO UPDATE SET user_name = EXCLUDED.user_name, job_number = EXCLUDED.job_number, mobile = EXCLUDED.mobile, landline = EXCLUDED.landline, email = EXCLUDED.email, is_deleted = 0"
+	"INSERT INTO account_user_info(user_id, user_name, job_number, mobile, landline, email, is_deleted) VALUES ($1, $2, $3, $4, $5, $6, '0')" +
+	" ON CONFLICT(user_id)" +
+	" DO UPDATE SET user_name = EXCLUDED.user_name, job_number = EXCLUDED.job_number, mobile = EXCLUDED.mobile, landline = EXCLUDED.landline, email = EXCLUDED.email, is_deleted = '0'"
 
 const initUserInfoSQL = "" +
 	"INSERT INTO account_user_info(user_id, user_name, job_number, mobile, landline, email) VALUES ($1, $2, $3, $4, $5, $6)" +
-	" ON CONFLICT ON CONSTRAINT account_user_info_unique DO NOTHING"
+	" ON CONFLICT(user_id) DO NOTHING"
 
 const recoverUserInfoSQL = "" +
 	"SELECT user_id, COALESCE(user_name,'') as user_name, COALESCE(job_number,'') as job_number, COALESCE(mobile,'') as mobile, COALESCE(landline,'') as landline, COALESCE(email,'') as email FROM account_user_info limit $1 offset $2"
@@ -239,7 +239,7 @@ func (s *userInfoStatements) deleteUserInfo(
 		return s.db.WriteDBEvent(&update)
 	}
 
-	isDeleted := 1
+	isDeleted := "1"
 	_, err := s.deleteUserInfoStmt.ExecContext(ctx, isDeleted, userID)
 	return err
 }
@@ -247,7 +247,7 @@ func (s *userInfoStatements) deleteUserInfo(
 func (s *userInfoStatements) onDeleteUserInfo(
 	ctx context.Context, userID string,
 ) error {
-	isDeleted := 1
+	isDeleted := "1"
 	_, err := s.deleteUserInfoStmt.ExecContext(ctx, isDeleted, userID)
 	return err
 }

@@ -37,8 +37,8 @@ CREATE UNIQUE INDEX IF NOT EXISTS federation_send_record_room_id_idx
 
 const insertSendRecordSQL = "" +
 	"INSERT INTO federation_send_record (room_id, domain, event_id, send_times, pending_size)" +
-	" VALUES ($1, $2, 0, 0, 0)" +
-	" ON CONFLICT ON CONSTRAINT federation_send_record_unique" +
+	" VALUES ($1, $2, '0', 0, 0)" +
+	" ON CONFLICT(room_id, domain)" +
 	" DO NOTHING"
 
 const selectAllSendRecordSQL = "" +

@@ -22,8 +22,8 @@ import (
 	"database/sql"
 
 	"github.com/finogeeks/ligase/common/encryption"
-	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
 	"github.com/lib/pq"
 )
 
@@ -53,11 +53,11 @@ CREATE TABLE IF NOT EXISTS roomserver_event_json_mirror (
 
 const insertEventJSONSQL = "" +
 	"INSERT INTO roomserver_event_json (event_nid, event_json) VALUES ($1, $2)" +
-	" ON CONFLICT DO NOTHING"
+	" ON CONFLICT(event_nid) DO NOTHING"
 
 const insertEventJSONSQLMirror = "" +
 	"INSERT INTO roomserver_event_json_mirror (event_nid, event_json) VALUES ($1, $2)" +
-	" ON CONFLICT DO NOTHING"
+	" ON CONFLICT(event_nid) DO NOTHING"
 
 // Bulk event JSON lookup by numeric event ID.
 // Sort by the numeric event ID.

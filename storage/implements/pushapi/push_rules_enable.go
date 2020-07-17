@@ -19,8 +19,8 @@ import (
 	"database/sql"
 
 	"github.com/finogeeks/ligase/common"
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	"github.com/finogeeks/ligase/skunkworks/log"
 )
 
 const pushRulesEnableSchema = `
@@ -38,7 +38,7 @@ CREATE INDEX IF NOT EXISTS push_rules_enable_user_name ON push_rules_enable(user
 
 const insertPushRuleEnableSQL = "" +
 	"INSERT INTO push_rules_enable(user_name, rule_id, enabled) VALUES ($1, $2, $3)" +
-	" ON CONFLICT ON CONSTRAINT push_rules_enable_unique" +
+	" ON CONFLICT(user_name, rule_id)" +
 	" DO UPDATE SET enabled = EXCLUDED.enabled"
 
 const selectPushRuleEnableCountSQL = "" +

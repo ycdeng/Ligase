@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS roomserver_rooms (
 // Same as insertEventTypeNIDSQL
 const insertRoomNIDSQL = "" +
 	"INSERT INTO roomserver_rooms (room_nid, room_id) VALUES ($1, $2)" +
-	" ON CONFLICT ON CONSTRAINT roomserver_room_id_unique DO NOTHING"
+	" ON CONFLICT(room_id) DO NOTHING"
 
 const selectRoomExistsSQL = "" +
 	"SELECT count(1) FROM roomserver_rooms WHERE room_id = $1"

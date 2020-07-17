@@ -19,8 +19,8 @@ import (
 	"database/sql"
 
 	"github.com/finogeeks/ligase/common"
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	"github.com/finogeeks/ligase/skunkworks/log"
 )
 
 const pushrulesSchema = `
@@ -41,7 +41,7 @@ CREATE INDEX IF NOT EXISTS push_rules_user_name ON push_rules(user_name);
 
 const insertPushRuleSQL = "" +
 	"INSERT INTO push_rules(user_name, rule_id, priority_class, priority, conditions, actions) VALUES ($1, $2, $3, $4, $5, $6)" +
-	" ON CONFLICT ON CONSTRAINT push_rules_unique" +
+	" ON CONFLICT(user_name, rule_id)" +
 	" DO UPDATE SET priority_class = EXCLUDED.priority_class, priority = EXCLUDED.priority, conditions = EXCLUDED.conditions, actions = EXCLUDED.actions"
 
 const deletePushRuleSQL = "" +

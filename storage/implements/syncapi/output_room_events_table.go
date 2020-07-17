@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS syncapi_output_room_events_mirror (
 CREATE UNIQUE INDEX IF NOT EXISTS syncapi_event_id_uni_idx_mirror ON syncapi_output_room_events_mirror(id);
 CREATE INDEX IF NOT EXISTS syncapi_output_event_id_idx_mirror ON syncapi_output_room_events_mirror(event_id);
 CREATE INDEX  IF NOT EXISTS syncapi_user_history_mirror  ON syncapi_output_room_events_mirror (type,room_id);
-CREATE INDEX IF NOT EXISTS syncapi_output_room_visibility_mirror  ON syncapi_output_room_events_mirror (type,room_id,device_id) WHERE device_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS syncapi_output_room_visibility_mirror  ON syncapi_output_room_events_mirror (type,room_id,device_id);
 CREATE INDEX  IF NOT EXISTS syncapi_user_recent_mirror ON syncapi_output_room_events_mirror (room_id);
 CREATE INDEX  IF NOT EXISTS syncapi_load_room_history_mirror ON syncapi_output_room_events_mirror (id,room_id);
 `
@@ -106,12 +106,12 @@ CREATE INDEX  IF NOT EXISTS syncapi_load_room_history_mirror ON syncapi_output_r
 const insertEventSQL = "" +
 	"INSERT INTO syncapi_output_room_events (" +
 	"id, room_id, event_id, event_json, add_state_ids, remove_state_ids, device_id, transaction_id, type, domain_offset, depth, domain, origin_server_ts" +
-	") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) ON CONFLICT DO NOTHING"
+	") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) ON CONFLICT(event_id, room_id) DO NOTHING"
 
 const insertEventSQLMirror = "" +
 	"INSERT INTO syncapi_output_room_events_mirror (" +
 	"id, room_id, event_id, event_json, add_state_ids, remove_state_ids, device_id, transaction_id, type, domain_offset, depth, domain, origin_server_ts" +
-	") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) ON CONFLICT DO NOTHING"
+	") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) ON CONFLICT(event_id, room_id) DO NOTHING"
 
 const selectEventsSQL = "" +
 	"SELECT id, event_json, device_id, transaction_id, type FROM syncapi_output_room_events WHERE event_id = ANY($1)"

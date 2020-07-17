@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS roomserver_membership (
 const insertMembershipSQL = "" +
 	"INSERT INTO roomserver_membership (room_nid, target_id, target_forget_nid, room_id, membership_nid, event_nid)" +
 	" VALUES ($1, $2, -1, $3, $4, $5)" +
-	" ON CONFLICT DO NOTHING"
+	" ON CONFLICT(room_nid, target_id) DO NOTHING"
 
 const selectMembershipForUpdateSQL = "" +
 	"SELECT membership_nid FROM roomserver_membership" +

@@ -38,7 +38,7 @@ CREATE INDEX IF NOT EXISTS roomserver_room_id_idx ON roomserver_room_aliases(roo
 `
 
 const insertRoomAliasSQL = "" +
-	"INSERT INTO roomserver_room_aliases (alias, room_id) VALUES ($1, $2) ON CONFLICT DO NOTHING"
+	"INSERT INTO roomserver_room_aliases (alias, room_id) VALUES ($1, $2) ON CONFLICT(alias) DO NOTHING"
 
 const selectRoomIDFromAliasSQL = "" +
 	"SELECT room_id FROM roomserver_room_aliases WHERE alias = $1"

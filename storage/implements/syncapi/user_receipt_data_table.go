@@ -17,9 +17,10 @@ package syncapi
 import (
 	"context"
 	"database/sql"
+
 	"github.com/finogeeks/ligase/common"
-	log "github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	log "github.com/finogeeks/ligase/skunkworks/log"
 )
 
 const userReceiptDataSchema = `
@@ -39,7 +40,7 @@ CREATE INDEX IF NOT EXISTS syncapi_user_receipt_data_idx ON syncapi_user_receipt
 
 const insertUserReceiptDataSQL = "" +
 	"INSERT INTO syncapi_user_receipt_data (evt_offset, room_id, user_id, content) VALUES ($1, $2, $3, $4)" +
-	" ON CONFLICT ON CONSTRAINT syncapi_user_receipt_data_unique" +
+	" ON CONFLICT(user_id, room_id)" +
 	" DO UPDATE SET content = EXCLUDED.content, evt_offset = EXCLUDED.evt_offset"
 
 const selectHistoryUserReceiptDataSQL = "" +

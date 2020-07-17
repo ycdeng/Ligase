@@ -17,13 +17,14 @@ package syncapi
 import (
 	"context"
 	"database/sql"
+	"time"
+
 	"github.com/finogeeks/ligase/common"
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
 	"github.com/finogeeks/ligase/model/syncapitypes"
 	"github.com/finogeeks/ligase/model/types"
+	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/lib/pq"
-	"time"
 )
 
 const userTimeLineSchema = `
@@ -45,7 +46,7 @@ CREATE INDEX IF NOT EXISTS syncapi_user_time_line_user_id_desc_null_last_idx ON 
 
 const insertUserTimeLineSQL = "" +
 	"INSERT INTO syncapi_user_time_line (id, room_id, event_nid, user_id, room_state, ts, event_offset) VALUES ($1, $2, $3, $4, $5, $6, $7)" +
-	" ON CONFLICT DO NOTHING"
+	" ON CONFLICT(id, user_id) DO NOTHING"
 
 const selectHistoryUserTimeLineSQL = "" +
 	"SELECT id, user_id, room_id, event_offset, room_state FROM syncapi_user_time_line WHERE user_id = $1 AND id > $2 order by id asc limit $3"

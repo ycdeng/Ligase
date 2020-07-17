@@ -19,8 +19,8 @@ import (
 	"database/sql"
 
 	"github.com/finogeeks/ligase/common"
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	"github.com/finogeeks/ligase/skunkworks/log"
 )
 
 const presenceSchema = `
@@ -38,7 +38,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS presences_user_id_idx ON presence_presences(us
 
 const upsertPresencesSQL = "" +
 	"INSERT INTO presence_presences(user_id, status, status_msg, ext_status_msg) VALUES ($1, $2, $3, $4)" +
-	" ON CONFLICT ON CONSTRAINT presence_presences_unique" +
+	" ON CONFLICT(user_id)" +
 	" DO UPDATE SET status = EXCLUDED.status, status_msg = EXCLUDED.status_msg"
 
 const recoverPresencesSQL = "" +

@@ -22,6 +22,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+
 	"github.com/finogeeks/ligase/common"
 	"github.com/finogeeks/ligase/model/dbtypes"
 	"github.com/finogeeks/ligase/model/publicroomstypes"
@@ -73,7 +74,7 @@ CREATE TABLE IF NOT EXISTS publicroomsapi_public_rooms(
 
 const insertNewRoomSQL = "" +
 	"INSERT INTO publicroomsapi_public_rooms(room_id, seq_id, joined_members, aliases, canonical_alias, name, topic, world_readable, guest_can_join, avatar_url, visibility)" +
-	" VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) ON CONFLICT DO NOTHING"
+	" VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) ON CONFLICT(room_id) DO NOTHING"
 
 const incrementJoinedMembersInRoomSQL = "" +
 	"UPDATE publicroomsapi_public_rooms" +

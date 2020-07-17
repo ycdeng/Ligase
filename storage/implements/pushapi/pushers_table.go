@@ -20,8 +20,8 @@ import (
 	"time"
 
 	"github.com/finogeeks/ligase/common"
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	"github.com/finogeeks/ligase/skunkworks/log"
 )
 
 const pushersSchema = `
@@ -51,7 +51,7 @@ const deleteUserPushersSQL = "" +
 const insertUserPusherSQL = "" +
 	"INSERT INTO pushers(user_name, profile_tag, kind, app_id, app_display_name, device_display_name, push_key, lang, push_data, push_key_ts,device_id)" +
 	" VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11)" +
-	" ON CONFLICT ON CONSTRAINT pushers_unique" +
+	" ON CONFLICT(user_name, app_id, push_key)" +
 	" DO UPDATE SET profile_tag = EXCLUDED.profile_tag, kind = EXCLUDED.kind, app_display_name = EXCLUDED.app_display_name," +
 	"  device_display_name = EXCLUDED.device_display_name, push_key_ts = EXCLUDED.push_key_ts, lang = EXCLUDED.lang, push_data = EXCLUDED.push_data"
 

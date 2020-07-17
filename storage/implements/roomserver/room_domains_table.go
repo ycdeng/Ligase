@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS roomserver_room_domains (
 
 const upsertRoomDomainsSQL = "" +
 	"INSERT INTO roomserver_room_domains (room_nid, domain, offsets) VALUES ($1, $2, $3)" +
-	" ON CONFLICT ON CONSTRAINT roomserver_room_domains_unique" +
+	" ON CONFLICT(room_nid, domain)" +
 	" DO UPDATE SET offsets = $3"
 
 const selectRoomDomainsSQL = "" +

@@ -22,8 +22,8 @@ import (
 	"database/sql"
 
 	"github.com/finogeeks/ligase/common"
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/dbtypes"
+	"github.com/finogeeks/ligase/skunkworks/log"
 )
 
 const deviceKeySchema = `
@@ -44,7 +44,7 @@ CREATE INDEX IF NOT EXISTS encrypt_device_key_device_id ON encrypt_device_key(de
 `
 const insertDeviceKeySQL = `
 INSERT INTO encrypt_device_key (device_id, user_id, key_info, algorithm, signature, identifier)
-VALUES ($1, $2, $3, $4, $5, $6) on conflict ON CONSTRAINT encrypt_device_key_unique 
+VALUES ($1, $2, $3, $4, $5, $6) on conflict(device_id, user_id, algorithm)
 DO UPDATE SET key_info = EXCLUDED.key_info, signature = EXCLUDED.signature
 `
 
