@@ -334,6 +334,13 @@ func (d *Database) GetInviteRidsForUser(
 	return d.roomstate.selectRoomIDsWithMembership(ctx, userID, []string{"invite"})
 }
 
+func (d *Database) GetLeaveRidsForUser(
+	ctx context.Context,
+	userID string,
+) ([]string, []int64, error) {
+	return d.roomstate.selectRoomIDsWithMembership(ctx, userID, []string{"leave", "ban"})
+}
+
 // streamEventsToEvents converts streamEvent to Event. If device is non-nil and
 // matches the streamevent.transactionID device then the transaction ID gets
 // added to the unsigned section of the output event.

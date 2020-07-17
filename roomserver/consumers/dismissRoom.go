@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/finogeeks/ligase/clientapi/routing"
+	"github.com/finogeeks/ligase/clientapi/threepid"
 	"github.com/finogeeks/ligase/common"
 	"github.com/finogeeks/ligase/common/config"
 	"github.com/finogeeks/ligase/common/uid"
@@ -95,22 +96,31 @@ func (c *DismissRoomConsumer) OnMessage(topic string, partition int32, data []by
 	msg := external.PostRoomsMembershipRequest{}
 	msg.Membership = "dismiss"
 	msg.RoomID = roomID
-	msg.Content = []byte("kick")
-	// if leave fail , ignore and continue
+	var body threepid.MembershipRequest
 	for _, ev := range queryRes.Join {
-		time.Sleep(200)
 		userID := *ev.StateKey()
+		body.UserID = userID
+		content, _ := json.Marshal(body)
+		msg.Content = content
+		// sender must be the people dismiss room
+		// deviceId cannot 100% get by userID, use leave member's userID instead
 		status, _ := routing.SendMembership(ctx, &msg, c.accountDB, req.UserID, userID, roomID, "dismiss", *c.cfg, c.rpcCli, c.federation, c.cache, c.idg, c.complexCache)
 		if status != http.StatusOK {
 			log.Errorf("DismissRoomConsumer leave fail! skip user:%s, roomID:%s", userID, roomID)
 		}
+		time.Sleep(200 * time.Millisecond)
 	}
 	for _, ev := range queryRes.Invite {
-		time.Sleep(200)
 		userID := *ev.StateKey()
+		body.UserID = userID
+		content, _ := json.Marshal(body)
+		msg.Content = content
+		// sender must be the people dismiss room
+		// deviceId cannot 100% get by userID, use leave member's userID instead
 		status, _ := routing.SendMembership(ctx, &msg, c.accountDB, req.UserID, userID, roomID, "dismiss", *c.cfg, c.rpcCli, c.federation, c.cache, c.idg, c.complexCache)
 		if status != http.StatusOK {
 			log.Errorf("DismissRoomConsumer leave fail! skip user:%s, roomID:%s", userID, roomID)
 		}
+		time.Sleep(200 * time.Millisecond)
 	}
 }

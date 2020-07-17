@@ -102,6 +102,10 @@ type SyncAPIDatabase interface {
 		ctx context.Context,
 		userID string,
 	) (rids []string, offsets []int64, err error)
+	GetLeaveRidsForUser(
+		ctx context.Context,
+		userID string,
+	) (rids []string, offsets []int64, err error)
 	InsertStdMessage(
 		ctx context.Context, stdEvent syncapitypes.StdHolder, targetUID, targetDevice, identifier string, offset int64,
 	) (err error)

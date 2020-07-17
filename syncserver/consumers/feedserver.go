@@ -247,7 +247,7 @@ func (s *RoomEventFeedConsumer) onNewRoomEvent(
 			log.Panicf("%v\n%s\n", e, stack)
 		}
 	}()
-
+	bs := time.Now().UnixNano() / 1000000
 	ev := msg.Event
 	log.Infof("feedserver onNewRoomEvent start roomID:%s eventID:%s sender:%s type:%s eventoffset:%d", ev.RoomID, ev.EventID, ev.Sender, ev.Type, ev.EventOffset)
 	domain, _ := common.DomainFromID(ev.Sender)
@@ -432,13 +432,15 @@ func (s *RoomEventFeedConsumer) onNewRoomEvent(
 			}
 		}
 	}
-	log.Infof("feedserver onNewRoomEvent add history timeline roomID:%s eventID:%s sender:%s type:%s eventoffset:%d", ev.RoomID, ev.EventID, ev.Sender, ev.Type, ev.EventOffset)
+	spend := time.Now().UnixNano()/1000000 - bs
 	s.roomHistoryTimeLine.AddEv(&ev, ev.EventOffset, true) //更新room timeline
-
+	log.Infof("feedserver onNewRoomEvent add history timeline roomID:%s eventID:%s sender:%s type:%s eventoffset:%d spend:%d", ev.RoomID, ev.EventID, ev.Sender, ev.Type, ev.EventOffset, spend)
+	last := time.Now().UnixNano() / 1000000
 	if s.cfg.CalculateReadCount {
-		s.pushConsumer.OnEvent(&ev, ev.EventOffset)
+		s.pushConsumer.DispthEvent(&ev)
 	}
-
+	now := time.Now().UnixNano() / 1000000
+	log.Infof("feedserver onNewRoomEvent pushConsumer.OnEvent roomID:%s eventID:%s sender:%s type:%s eventoffset:%d push spend:%d onNewRoomEvent spend:%d", ev.RoomID, ev.EventID, ev.Sender, ev.Type, ev.EventOffset, now-last, now-bs)
 	return nil
 }
 
