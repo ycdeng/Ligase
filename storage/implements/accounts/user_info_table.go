@@ -133,7 +133,7 @@ func (s *userInfoStatements) processRecover(rows *sql.Rows) (exists bool, err er
 		update.IsRecovery = true
 		update.AccountDBEvents.UserInfoInsert = &ui
 		update.SetUid(int64(common.CalcStringHashCode64(ui.UserID)))
-		err2 := s.db.WriteDBEvent(&update)
+		err2 := s.db.WriteDBEventWithTbl(&update, "account_user_info")
 		if err2 != nil {
 			log.Errorf("update user_info cache error: %v", err2)
 			if err == nil {

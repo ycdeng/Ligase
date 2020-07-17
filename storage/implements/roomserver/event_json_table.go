@@ -144,7 +144,7 @@ func (s *eventJSONStatements) insertEventJSON(
 			EventType: eventType,
 		}
 		update.SetUid(eventNID)
-		s.db.WriteDBEvent(&update)
+		s.db.WriteDBEventWithTbl(&update, "roomserver_event_json")
 		return nil
 	}
 

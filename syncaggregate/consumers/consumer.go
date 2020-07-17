@@ -150,7 +150,7 @@ func (s *EventFeedConsumer) Start() error {
 	return nil
 }
 
-func (s *EventFeedConsumer) OnMessage(topic string, partition int32, data []byte) {
+func (s *EventFeedConsumer) OnMessage(topic string, partition int32, data []byte, rawMsg interface{}) {
 	var output roomserverapi.OutputEvent
 	if err := json.Unmarshal(data, &output); err != nil {
 		log.Errorw("sync aggregate: message parse failure", log.KeysAndValues{"error", err})

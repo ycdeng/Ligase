@@ -20,8 +20,8 @@ import (
 	"github.com/finogeeks/ligase/common"
 	"github.com/finogeeks/ligase/common/config"
 	"github.com/finogeeks/ligase/plugins/message/internals"
-	"github.com/json-iterator/go"
-	"github.com/nats-io/go-nats"
+	jsoniter "github.com/json-iterator/go"
+	"github.com/nats-io/nats.go"
 
 	log "github.com/finogeeks/ligase/skunkworks/log"
 )

@@ -42,6 +42,44 @@ import (
 	"github.com/finogeeks/ligase/syncwriter"
 )
 
+var dbUpdateProducerName = []string{
+	"account_accounts",
+	"account_data",
+	"account_filter",
+	"account_profiles",
+	"account_user_info",
+	"room_tags",
+	"device_devices",
+	"mig_device_devices",
+	"encrypt_algorithm",
+	"encrypt_device_key",
+	"encrypt_onetime_key",
+	"presence_presences",
+	"publicroomsapi_public_rooms",
+	"push_rules_enable",
+	"push_rules",
+	"pushers",
+	"roomserver_event_json",
+	"roomserver_events",
+	"roomserver_invites",
+	"roomserver_membership",
+	"roomserver_room_aliases",
+	"roomserver_room_domains",
+	"roomserver_rooms",
+	"roomserver_settings",
+	"roomserver_state_snapshots",
+	"syncapi_client_data_stream",
+	"syncapi_current_room_state",
+	"syncapi_key_change_stream",
+	"syncapi_output_min_stream",
+	"syncapi_output_room_events",
+	"syncapi_presence_data_stream",
+	"syncapi_receipt_data_stream",
+	"syncapi_send_to_device",
+	"syncapi_user_receipt_data",
+	"syncapi_user_time_line",
+}
+
 func StartMonolithServer(base *basecomponent.BaseDendrite, cmd *serverCmdPar) {
 	transportMultiplexer := common.GetTransportMultiplexer()
 	kafka := base.Cfg.Kafka
@@ -63,6 +101,14 @@ func StartMonolithServer(base *basecomponent.BaseDendrite, cmd *serverCmdPar) {
 	addProducer(transportMultiplexer, kafka.Producer.SettingUpdate)
 	addProducer(transportMultiplexer, kafka.Producer.UserInfoUpdate)
 	addProducer(transportMultiplexer, kafka.Producer.DismissRoom)
+
+	for _, v := range dbUpdateProducerName {
+		dbUpdates := kafka.Producer.DBUpdates
+		dbUpdates.Topic = dbUpdates.Topic + "_" + v
+		dbUpdates.Name = dbUpdates.Name + "_" + v
+		addProducer(transportMultiplexer, dbUpdates)
+	}
+
 	addConsumer(transportMultiplexer, kafka.Consumer.OutputRoomEventPublicRooms, base.Cfg.MultiInstance.Instance)
 	addConsumer(transportMultiplexer, kafka.Consumer.OutputRoomEventAppservice, base.Cfg.MultiInstance.Instance)
 	addConsumer(transportMultiplexer, kafka.Consumer.OutputRoomEventSyncServer, base.Cfg.MultiInstance.Instance)

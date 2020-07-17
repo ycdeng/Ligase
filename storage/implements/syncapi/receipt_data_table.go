@@ -109,7 +109,7 @@ func (s *receiptDataStreamStatements) insertReceiptDataStream(
 			Content:   content,
 		}
 		update.SetUid(int64(common.CalcStringHashCode64(roomID)))
-		s.db.WriteDBEvent(&update)
+		s.db.WriteDBEventWithTbl(&update, "syncapi_receipt_data_stream")
 		return nil
 	} else {
 		s.deleteLatestReceiptDataStreamStmt.ExecContext(ctx, roomID, evtOffset)

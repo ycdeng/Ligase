@@ -149,7 +149,7 @@ func (s *profilesStatements) processRecover(rows *sql.Rows) (exists bool, err er
 		update.IsRecovery = true
 		update.AccountDBEvents.ProfileInsert = &profileInsert
 		update.SetUid(int64(common.CalcStringHashCode64(profileInsert.UserID)))
-		err2 := s.db.WriteDBEvent(&update)
+		err2 := s.db.WriteDBEventWithTbl(&update, "account_profiles")
 		if err2 != nil {
 			log.Errorf("update profile cache error: %v", err2)
 			if err == nil {
@@ -174,7 +174,7 @@ func (s *profilesStatements) upsertProfile(
 			AvatarUrl:   avatarURL,
 		}
 		update.SetUid(int64(common.CalcStringHashCode64(userID)))
-		return s.db.WriteDBEvent(&update)
+		return s.db.WriteDBEventWithTbl(&update, "account_profiles")
 	}
 
 	return s.upsertProfileSync(ctx, userID, displayName, avatarURL)
@@ -199,7 +199,7 @@ func (s *profilesStatements) initProfile(
 			AvatarUrl:   avatarURL,
 		}
 		update.SetUid(int64(common.CalcStringHashCode64(userID)))
-		return s.db.WriteDBEvent(&update)
+		return s.db.WriteDBEventWithTbl(&update, "account_profiles")
 	}
 
 	_, err := s.initProfilesStmt.ExecContext(ctx, userID, displayName, avatarURL)
@@ -218,7 +218,7 @@ func (s *profilesStatements) upsertDisplayName(
 			DisplayName: displayName,
 		}
 		update.SetUid(int64(common.CalcStringHashCode64(userID)))
-		return s.db.WriteDBEvent(&update)
+		return s.db.WriteDBEventWithTbl(&update, "account_profiles")
 	}
 
 	return s.upsertDisplayNameSync(ctx, userID, displayName)
@@ -242,7 +242,7 @@ func (s *profilesStatements) upsertAvatar(
 			AvatarUrl: avatarURL,
 		}
 		update.SetUid(int64(common.CalcStringHashCode64(userID)))
-		return s.db.WriteDBEvent(&update)
+		return s.db.WriteDBEventWithTbl(&update, "account_profiles")
 	}
 
 	return s.upsertAvatarSync(ctx, userID, avatarURL)

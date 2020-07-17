@@ -26,9 +26,9 @@ import (
 	"github.com/finogeeks/ligase/federation/federationapi/rpc"
 	"github.com/finogeeks/ligase/federation/model/repos"
 	fedmodel "github.com/finogeeks/ligase/federation/storage/model"
+	"github.com/finogeeks/ligase/model"
 	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
 	log "github.com/finogeeks/ligase/skunkworks/log"
-	"github.com/finogeeks/ligase/model"
 )
 
 type senderItem struct {
@@ -189,14 +189,13 @@ func (c *FederationBackFill) AddRequest(evs []gomatrixserverlib.Event, limit boo
 	return nil
 }
 
-func (c *FederationBackFill) OnMessage(subject string, partition int32, data []byte) {
+func (c *FederationBackFill) OnMessage(topic string, partition int32, data []byte, rawMsg interface{}) {
 	msg := &model.GobMessage{}
 	err := json.Unmarshal(data, msg)
 	if err != nil {
 		log.Errorf("decode error: %v", err)
 		return
 	}
-	log.Infof("fed-backfill recv topic:%s", subject)
 
 	if msg.Cmd == model.CMD_FED_SEND {
 		t := gomatrixserverlib.Transaction{}

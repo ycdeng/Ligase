@@ -112,7 +112,7 @@ func (s *inviteStatements) insertInviteEvent(
 			Content: inviteEventJSON,
 		}
 		update.SetUid(roomNID)
-		s.db.WriteDBEvent(&update)
+		s.db.WriteDBEventWithTbl(&update, "roomserver_invites")
 		return true, nil
 	}
 
@@ -150,7 +150,7 @@ func (s *inviteStatements) updateInviteRetired(
 			Target:  targetUser,
 		}
 		update.SetUid(roomNID)
-		s.db.WriteDBEvent(&update)
+		s.db.WriteDBEventWithTbl(&update, "roomserver_invites")
 
 		return nil
 	}

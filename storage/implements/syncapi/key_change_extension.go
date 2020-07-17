@@ -88,7 +88,7 @@ func (s *keyChangeStatements) insertKeyStream(
 			ChangedUserID: changedUserID,
 		}
 		update.SetUid(int64(common.CalcStringHashCode64(changedUserID)))
-		s.db.WriteDBEvent(&update)
+		s.db.WriteDBEventWithTbl(&update, "syncapi_key_change_stream")
 		return nil
 	} else {
 		_, err = s.insertKeyStreamStmt.ExecContext(ctx, id, changedUserID)

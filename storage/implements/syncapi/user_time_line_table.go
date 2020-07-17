@@ -159,7 +159,7 @@ func (s *userTimeLineStatements) insertUserTimeLine(
 			EventOffset: eventOffset,
 		}
 		update.SetUid(int64(common.CalcStringHashCode64(roomID)))
-		s.db.WriteDBEvent(&update)
+		s.db.WriteDBEventWithTbl(&update, "syncapi_user_time_line")
 		return nil
 	} else {
 		_, err = s.insertUserTimeLineStmt.ExecContext(ctx, id, roomID, evtNID, userID, roomState, ts, eventOffset)

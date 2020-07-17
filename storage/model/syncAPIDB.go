@@ -16,6 +16,7 @@ package model
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/finogeeks/ligase/common/uid"
 	"github.com/finogeeks/ligase/model/dbtypes"
@@ -26,6 +27,7 @@ import (
 )
 
 type SyncAPIDatabase interface {
+	GetDB() *sql.DB
 	//NewDatabase(driver, createAddr, address, topic string, useAsync bool) (interface{}, error)
 	SetIDGenerator(idg *uid.UidGenerator)
 
@@ -79,6 +81,7 @@ type SyncAPIDatabase interface {
 		ctx context.Context, event gomatrixserverlib.ClientEvent, eventID string, eventType string,
 		RoomID string,
 	) error
+	OnUpdateEvent(ctx context.Context, eventID, roomID string, eventJson []byte, eventType string) error
 	SelectEventsByDir(
 		ctx context.Context,
 		userID, roomID string, dir string, from int64, limit int,

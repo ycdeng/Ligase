@@ -77,7 +77,7 @@ func (s *outputMinStreamStatements) insertOutputMinStream(
 			RoomID: roomID,
 		}
 		update.SetUid(int64(common.CalcStringHashCode64(roomID)))
-		s.db.WriteDBEvent(&update)
+		s.db.WriteDBEventWithTbl(&update, "syncapi_output_min_stream")
 		return nil
 	} else {
 		_, err = s.insertOutputMinStreamStmt.ExecContext(ctx, id, roomID)

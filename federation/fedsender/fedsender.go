@@ -30,11 +30,11 @@ import (
 	"github.com/finogeeks/ligase/federation/federationapi/rpc"
 	"github.com/finogeeks/ligase/federation/fedsender/queue"
 	"github.com/finogeeks/ligase/federation/storage/model"
-	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
-	"github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/repos"
 	"github.com/finogeeks/ligase/model/service/roomserverapi"
 	"github.com/finogeeks/ligase/model/types"
+	"github.com/finogeeks/ligase/skunkworks/gomatrixserverlib"
+	"github.com/finogeeks/ligase/skunkworks/log"
 )
 
 type ServerName = gomatrixserverlib.ServerName
@@ -216,7 +216,7 @@ func (c *FederationSender) AddConsumer(domain string) error {
 	return errors.New("addConsumer can't find transport " + underlying)
 }
 
-func (c *FederationSender) OnMessage(topic string, partition int32, data []byte) {
+func (c *FederationSender) OnMessage(topic string, partition int32, data []byte, rawMsg interface{}) {
 	ev := new(gomatrixserverlib.Event)
 	if err := json.Unmarshal(data, ev); err != nil {
 		log.Errorf("fed-sender: message parse failure err:%v", err)

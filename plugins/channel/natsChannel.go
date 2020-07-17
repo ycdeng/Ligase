@@ -16,10 +16,11 @@ package channel
 
 import (
 	"errors"
+	"time"
+
 	"github.com/finogeeks/ligase/core"
 	"github.com/finogeeks/ligase/skunkworks/log"
-	"github.com/nats-io/go-nats"
-	"time"
+	"github.com/nats-io/nats.go"
 )
 
 type NatsChannel struct {
@@ -121,6 +122,10 @@ func (c *NatsChannel) Close() {
 	c.conn.Close()
 }
 
+func (c *NatsChannel) Commit(rawMsg []interface{}) error {
+	return nil
+}
+
 func (c *NatsChannel) Send(topic string, partition int32, keys, bytes []byte) error {
 	if topic == "" {
 		topic = c.topic
@@ -148,7 +153,7 @@ func (c *NatsChannel) SendRecv(topic string, bytes []byte, timeout int) ([]byte,
 }
 
 func (c *NatsChannel) cb(msg *nats.Msg) {
-	c.handler.OnMessage(msg.Subject, -1, msg.Data)
+	c.handler.OnMessage(msg.Subject, -1, msg.Data, msg)
 }
 
 func (c *NatsChannel) SendAndRecv(topic string, partition int32, keys, bytes []byte) error {

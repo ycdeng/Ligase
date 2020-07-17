@@ -110,7 +110,7 @@ func (s *pushRulesEnableStatements) processRecover(rows *sql.Rows) (exists bool,
 		update.IsRecovery = true
 		update.PushDBEvents.PushRuleEnableInsert = &pushRuleEnableInsert
 		update.SetUid(int64(common.CalcStringHashCode64(pushRuleEnableInsert.UserID)))
-		err2 := s.db.WriteDBEvent(&update)
+		err2 := s.db.WriteDBEventWithTbl(&update, "push_rules_enable")
 		if err2 != nil {
 			log.Errorf("update pushRulesEnable cache error: %v", err2)
 			if err == nil {
@@ -135,7 +135,7 @@ func (s *pushRulesEnableStatements) insertPushRuleEnable(
 			Enabled: enable,
 		}
 		update.SetUid(int64(common.CalcStringHashCode64(userID)))
-		return s.db.WriteDBEvent(&update)
+		return s.db.WriteDBEventWithTbl(&update, "push_rules_enable")
 	}
 
 	return s.onInsertPushRuleEnable(ctx, userID, ruleID, enable)

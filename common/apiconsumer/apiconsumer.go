@@ -24,11 +24,11 @@ import (
 	"github.com/finogeeks/ligase/common/config"
 	"github.com/finogeeks/ligase/common/jsonerror"
 	"github.com/finogeeks/ligase/core"
-	log "github.com/finogeeks/ligase/skunkworks/log"
 	"github.com/finogeeks/ligase/model/authtypes"
 	"github.com/finogeeks/ligase/plugins/message/internals"
-	"github.com/json-iterator/go"
-	"github.com/nats-io/go-nats"
+	log "github.com/finogeeks/ligase/skunkworks/log"
+	jsoniter "github.com/json-iterator/go"
+	"github.com/nats-io/nats.go"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary

@@ -82,6 +82,16 @@ func (d *Database) WriteDBEvent(update *dbtypes.DBEvent) error {
 		})
 }
 
+func (d *Database) WriteDBEventWithTbl(update *dbtypes.DBEvent, tbl string) error {
+	return common.GetTransportMultiplexer().SendWithRetry(
+		d.underlying,
+		d.topic+"_"+tbl,
+		&core.TransportPubMsg{
+			Keys: []byte(update.GetEventKey()),
+			Obj:  update,
+		})
+}
+
 type RoomEventVerbose struct {
 	Stream int64
 	RoomID string
@@ -159,6 +169,10 @@ func (d *Database) SetGauge(qryDBGauge mon.LabeledGauge) {
 
 func (d *Database) SetIDGenerator(idg *uid.UidGenerator) {
 	d.idg = idg
+}
+
+func (d *Database) GetDB() *sql.DB {
+	return d.db
 }
 
 // Events lookups a list of event by their event ID.
@@ -279,6 +293,10 @@ func (d *Database) UpdateEvent(
 		return err
 	}
 	return d.events.updateEvent(ctx, eventJSON, eventID, RoomID, eventType)
+}
+
+func (d *Database) OnUpdateEvent(ctx context.Context, eventID, roomID string, eventJson []byte, eventType string) error {
+	return d.events.updateEventRaw(ctx, eventJson, eventID, roomID, eventType)
 }
 
 func (d *Database) SelectEventsByDir(

@@ -40,7 +40,8 @@ type KafkaConsumerConf interface {
 }
 
 const (
-	DefaultTimeOut = 10
+	DefaultTimeOut          = 10
+	DefaultEnableAutoCommit = true
 )
 
 type msgContext struct {
@@ -66,6 +67,7 @@ type KafkaChannel struct {
 	cacheTopics sync.Map
 	broker      string
 	conf        interface{}
+	subTopics   []string
 }
 
 func init() {
@@ -222,6 +224,40 @@ func (c *KafkaChannel) Close() {
 	}
 }
 
+func (c *KafkaChannel) Commit(rawMsgs []interface{}) error {
+	if len(rawMsgs) == 0 || c.consumer == nil {
+		return nil
+	}
+
+	partitionsMsgArr := []*kafka.Message{}
+	partitionsMsg := make(map[string]map[int32]bool)
+	for i := len(rawMsgs) - 1; i >= 0; i-- {
+		rawMsg := rawMsgs[i]
+		if v, ok := rawMsg.(*kafka.Message); ok {
+			topic := *v.TopicPartition.Topic
+			tempMap := partitionsMsg[topic]
+			if tempMap == nil {
+				tempMap = make(map[int32]bool)
+				partitionsMsg[topic] = tempMap
+			}
+			if !tempMap[v.TopicPartition.Partition] {
+				tempMap[v.TopicPartition.Partition] = true
+				partitionsMsgArr = append(partitionsMsgArr, v)
+			}
+		}
+	}
+	var err error
+	for i := len(partitionsMsgArr) - 1; i >= 0; i-- {
+		v := partitionsMsgArr[i]
+		_, err0 := c.consumer.CommitMessage(v)
+		if err0 != nil {
+			log.Errorf("kafka commit offset error %s", v)
+			err = err0
+		}
+	}
+	return err
+}
+
 func (c *KafkaChannel) startProducer() error {
 	c.startChan()
 	go func() {
@@ -264,20 +300,21 @@ func (c *KafkaChannel) startProducer() error {
 
 //todo mannual commit message
 func (c *KafkaChannel) startConsumer() error {
-	err := c.consumer.SubscribeTopics([]string{c.topic}, nil)
+	c.subTopics = []string{c.topic}
+	err := c.consumer.SubscribeTopics(c.subTopics, nil)
 	if err != nil {
 		log.Errorf("StartConsumer sub err: %v", err)
 		return nil
 	}
 
 	log.Infof("StartConsumer topic:%s group:%s", c.topic, c.grp)
-	onMessage := func(consumer core.IChannelConsumer, topic string, partition int32, data []byte) {
+	onMessage := func(consumer core.IChannelConsumer, msg *kafka.Message) {
 		defer func() {
 			if e := recover(); e != nil {
 				log.Errorf("channel consumer panic: %#v", e)
 			}
 		}()
-		consumer.OnMessage(topic, partition, data)
+		consumer.OnMessage(*msg.TopicPartition.Topic, msg.TopicPartition.Partition, msg.Value, msg)
 	}
 	var evHandler func()
 	evHandler = func() {
@@ -287,7 +324,7 @@ func (c *KafkaChannel) startConsumer() error {
 				go evHandler()
 			}
 		}()
-		for c.start == true {
+		for c.start {
 			select {
 			case ev := <-c.consumer.Events():
 				switch e := ev.(type) {
@@ -299,11 +336,13 @@ func (c *KafkaChannel) startConsumer() error {
 					log.Infof("consumer unassigned partitions: %v", e)
 				case *kafka.Message:
 					//log.Infof("consumer %% Message on topic:%s partition:%d offset:%d val:%s grp:%s", *e.TopicPartition.Topic, e.TopicPartition.Partition, e.TopicPartition.Offset, string(e.Value), t.consumerGroup)
-					onMessage(c.handler, *e.TopicPartition.Topic, e.TopicPartition.Partition, e.Value)
+					onMessage(c.handler, e)
 				case kafka.PartitionEOF:
 					log.Infof("consumer Reached: %v", e)
 				case kafka.Error:
 					log.Errorf("consumer Error: %v", e)
+				case kafka.OffsetsCommitted:
+					log.Infof("consumer offset commited %s", e)
 				case *kafka.Stats:
 					// https://github.com/edenhill/librdkafka/blob/master/STATISTICS.md
 					var stats map[string]interface{}
@@ -367,7 +406,7 @@ func (c *KafkaChannel) preStartProducer(broker string, statsInterval int) error 
 
 func (c *KafkaChannel) preStartConsumer(broker string, statsInterval int) error {
 	if c.consumer == nil {
-		enableAutoCommit := true
+		enableAutoCommit := DefaultEnableAutoCommit
 		autoCommitIntervalMS := 5000
 		topicAutoOffsetReset := "latest"
 		goChannelEnable := true
@@ -612,4 +651,14 @@ func (c *KafkaChannel) pubRetry(msg *kafka.Message) (retry bool, retries int) {
 //nats methed interface
 func (c *KafkaChannel) SendRecv(topic string, bytes []byte, timeout int) ([]byte, error) {
 	return nil, errors.New("unsupported commond SendRecv")
+}
+
+func (c *KafkaChannel) SubscribeTopic(topic string) error {
+	c.subTopics = append(c.subTopics, topic)
+	err := c.consumer.SubscribeTopics(c.subTopics, nil)
+	if err != nil {
+		log.Errorf("SubscribeTopic sub err: %v", err)
+		return err
+	}
+	return nil
 }
